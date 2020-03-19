@@ -4,8 +4,8 @@
  *	@desc      game data library
  */
 (function (module, require) {
-	const MonsterData = require('MonsterData');
-	const AreaData = require('AreaData');
+	const MonsterData = require('./MonsterData');
+	const AreaData = require('./AreaData');
 	const GameData = {
 		townAreas: [0, 1, 40, 75, 103, 109],
 		monsterLevel: function (monsterID, areaID) {
