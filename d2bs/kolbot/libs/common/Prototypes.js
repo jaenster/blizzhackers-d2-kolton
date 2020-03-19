@@ -1317,3 +1317,21 @@ Unit.prototype.getBodyLoc = function () {
 	// Strings are hard to calculate with, parse to int
 	return bodyLoc.map(parseInt);
 };
+
+/**
+ * @description Return the items of a player, or an empty array
+ * @param args
+ * @returns Unit[]
+ */
+Unit.prototype.getItemsEx = function (...args) {
+	let item = this.getItem.apply(this, args), items = [];
+
+	if (item) {
+		do {
+			items.push(copyUnit(item));
+		} while (item.getNext());
+		return items;
+	}
+
+	return [];
+};
