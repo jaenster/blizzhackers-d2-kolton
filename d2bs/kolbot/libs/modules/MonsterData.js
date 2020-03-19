@@ -5,6 +5,8 @@
  */
 
 (function (module, require) {
+	const LocaleStringName = require('./LocaleStringID').LocaleStringName;
+
 	const MONSTER_INDEX_COUNT = 734;
 	/**
 	 *  MonsterData[classID]
@@ -38,75 +40,97 @@
 	 *  .Minions = array of minions that can spawn with this unit
 	 */
 
-	const MonsterData = Array(MONSTER_INDEX_COUNT);
+	/**
+	 *  MonsterData[classID]
+	 *  .Index = Index of this monster
+	 *  .Level = Level of this monster in normal (use GameData.monsterLevel to find monster levels)
+	 *  .Ranged = if monster is ranged
+	 *  .Rarity = weight of this monster in level generation
+	 *  .Threat = threat level used by mercs
+	 *  .Align = alignment of unit (determines what it will attack)
+	 *  .Melee = if monster is melee
+	 *  .NPC = if unit is NPC
+	 *  .Demon = if monster is demon
+	 *  .Flying = if monster is flying
+	 *  .Boss = if monster is a boss
+	 *  .ActBoss = if monster is act boss
+	 *  .Killable = if monster can be killed
+	 *  .Convertable = if monster is affected by convert or mind blast
+	 *  .NeverCount = if not counted as a minion
+	 *  .DeathDamage = explodes on death
+	 *  .Regeneration = hp regeneration
+	 *  .LocaleString = locale string index for getLocaleString
+	 *  .ExperienceModifier = percent of base monster exp this unit rewards when killed
+	 *  .Undead = 2 if greater undead, 1 if lesser undead, 0 if neither
+	 *  .Drain = drain effectiveness percent
+	 *  .Block = block percent
+	 *  .Physical = physical resist
+	 *  .Magic = magic resist
+	 *  .Fire = fire resist
+	 *  .Lightning = lightning resist
+	 *  .Poison = poison resist
+	 *  .Minions = array of minions that can spawn with this unit
+	 *  .MinionCount.Min = minimum number of minions that can spawn with this unit
+	 *  .MinionCount.Max = maximum number of minions that can spawn with this unit
+	 */
+
+	var MonsterData = Array(MONSTER_INDEX_COUNT);
 
 	for (let i = 0; i < MonsterData.length; i++) {
 		let index = i;
-		MonsterData[i] = Object.freeze(Object.defineProperties({}, {
-			Index: {get: () => index, enumerable: true},
-			Level: {get: () => getBaseStat('monstats', index, 'Level'), enumerable: true}, // normal only, nm/hell are determined by area's LevelEx
-			Ranged: {get: () => getBaseStat('monstats', index, 'RangedType'), enumerable: true},
-			Rarity: {get: () => getBaseStat('monstats', index, 'Rarity'), enumerable: true},
-			Threat: {get: () => getBaseStat('monstats', index, 'threat'), enumerable: true},
-			Align: {get: () => getBaseStat('monstats', index, 'Align'), enumerable: true},
-			Melee: {get: () => getBaseStat('monstats', index, 'isMelee'), enumerable: true},
-			NPC: {get: () => getBaseStat('monstats', index, 'npc'), enumerable: true},
-			Demon: {get: () => getBaseStat('monstats', index, 'demon'), enumerable: true},
-			Flying: {get: () => getBaseStat('monstats', index, 'flying'), enumerable: true},
-			Boss: {get: () => getBaseStat('monstats', index, 'boss'), enumerable: true},
-			ActBoss: {get: () => getBaseStat('monstats', index, 'primeevil'), enumerable: true},
-			Killable: {get: () => getBaseStat('monstats', index, 'killable'), enumerable: true},
-			Convertable: {get: () => getBaseStat('monstats', index, 'switchai'), enumerable: true},
-			NeverCount: {get: () => getBaseStat('monstats', index, 'neverCount'), enumerable: true},
-			DeathDamage: {get: () => getBaseStat('monstats', index, 'deathDmg'), enumerable: true},
-			Regeneration: {get: () => getBaseStat('monstats', index, 'DamageRegen'), enumerable: true},
-			LocaleString: {get: () => getBaseStat('monstats', index, 'NameStr'), enumerable: true},
-			ExperienceModifier: {
-				get: () => getBaseStat('monstats', index, ['Exp', 'Exp(N)', 'Exp(H)'][me.diff]),
-				enumerable: true
-			},
-			Undead: {
-				get: () => (getBaseStat('monstats', index, 'hUndead') && 2) | (getBaseStat('monstats', index, 'lUndead') && 1),
-				enumerable: true
-			},
-			Drain: {
-				get: () => getBaseStat('monstats', index, ["Drain", "Drain(N)", "Drain(H)"][me.diff]),
-				enumerable: true
-			},
-			Block: {
-				get: () => getBaseStat('monstats', index, ["ToBlock", "ToBlock(N)", "ToBlock(H)"][me.diff]),
-				enumerable: true
-			},
-			Physical: {
-				get: () => getBaseStat('monstats', index, ["ResDm", "ResDm(N)", "ResDm(H)"][me.diff]),
-				enumerable: true
-			},
-			Magic: {
-				get: () => getBaseStat('monstats', index, ["ResMa", "ResMa(N)", "ResMa(H)"][me.diff]),
-				enumerable: true
-			},
-			Fire: {
-				get: () => getBaseStat('monstats', index, ["ResFi", "ResFi(N)", "ResFi(H)"][me.diff]),
-				enumerable: true
-			},
-			Lightning: {
-				get: () => getBaseStat('monstats', index, ["ResLi", "ResLi(N)", "ResLi(H)"][me.diff]),
-				enumerable: true
-			},
-			Cold: {
-				get: () => getBaseStat('monstats', index, ["ResCo", "ResCo(N)", "ResCo(H)"][me.diff]),
-				enumerable: true
-			},
-			Poison: {
-				get: () => getBaseStat('monstats', index, ["ResPo", "ResPo(N)", "ResPo(H)"][me.diff]),
-				enumerable: true
-			},
-			Minions: {
-				get: () => [getBaseStat('monstats', index, 'minion1'), getBaseStat('monstats', index, 'minion2')].filter(mon => mon !== 65535),
-				enumerable: true
-			},
-		}));
+		MonsterData[i] = ({
+			Index: index,
+			ClassID: index,
+			Level: getBaseStat('monstats', index, 'Level'), // normal only, nm/hell are determined by area's LevelEx
+			Ranged: getBaseStat('monstats', index, 'RangedType'),
+			Rarity: getBaseStat('monstats', index, 'Rarity'),
+			Threat: getBaseStat('monstats', index, 'threat'),
+			PetIgnore: getBaseStat('monstats', index, 'petignore'),
+			Align: getBaseStat('monstats', index, 'Align'),
+			Melee: getBaseStat('monstats', index, 'isMelee'),
+			NPC: getBaseStat('monstats', index, 'npc'),
+			Demon: getBaseStat('monstats', index, 'demon'),
+			Flying: getBaseStat('monstats', index, 'flying'),
+			Boss: getBaseStat('monstats', index, 'boss'),
+			ActBoss: getBaseStat('monstats', index, 'primeevil'),
+			Killable: getBaseStat('monstats', index, 'killable'),
+			Convertable: getBaseStat('monstats', index, 'switchai'),
+			NeverCount: getBaseStat('monstats', index, 'neverCount'),
+			DeathDamage: getBaseStat('monstats', index, 'deathDmg'),
+			Regeneration: getBaseStat('monstats', index, 'DamageRegen'),
+			LocaleString: getLocaleString(getBaseStat('monstats', index, 'NameStr')),
+			InternalName: LocaleStringName[getBaseStat('monstats', index, 'NameStr')],
+			ExperienceModifier: getBaseStat('monstats', index, ['Exp', 'Exp(N)', 'Exp(H)'][me.diff]),
+			Undead: (getBaseStat('monstats', index, 'hUndead') && 2) | (getBaseStat('monstats', index, 'lUndead') && 1),
+			Drain: getBaseStat('monstats', index, ["Drain", "Drain(N)", "Drain(H)"][me.diff]),
+			Block: getBaseStat('monstats', index, ["ToBlock", "ToBlock(N)", "ToBlock(H)"][me.diff]),
+			Physical: getBaseStat('monstats', index, ["ResDm", "ResDm(N)", "ResDm(H)"][me.diff]),
+			Magic: getBaseStat('monstats', index, ["ResMa", "ResMa(N)", "ResMa(H)"][me.diff]),
+			Fire: getBaseStat('monstats', index, ["ResFi", "ResFi(N)", "ResFi(H)"][me.diff]),
+			Lightning: getBaseStat('monstats', index, ["ResLi", "ResLi(N)", "ResLi(H)"][me.diff]),
+			Cold: getBaseStat('monstats', index, ["ResCo", "ResCo(N)", "ResCo(H)"][me.diff]),
+			Poison: getBaseStat('monstats', index, ["ResPo", "ResPo(N)", "ResPo(H)"][me.diff]),
+			Minions: ([getBaseStat('monstats', index, 'minion1'), getBaseStat('monstats', index, 'minion2')].filter(mon => mon !== 65535)),
+			GroupCount: ({
+				Min: getBaseStat('monstats', index, 'MinGrp'),
+				Max: getBaseStat('monstats', index, 'MaxGrp')
+			}),
+			MinionCount: ({
+				Min: getBaseStat('monstats', index, 'PartyMin'),
+				Max: getBaseStat('monstats', index, 'PartyMax')
+			}),
+			Velocity: getBaseStat('monstats', index, 'Velocity'),
+			Run: getBaseStat('monstats', index, 'Run'),
+			SizeX: getBaseStat('monstats', index, 'SizeX'),
+			SizeY: getBaseStat('monstats', index, 'SizeY'),
+		});
 	}
+
+	MonsterData.findByName = function (whatToFind) {
+		let matches = MonsterData.map(mon => [Math.min(whatToFind.diffCount(mon.LocaleString), whatToFind.diffCount(mon.InternalName)), mon]).sort((a, b) => a[0] - b[0]);
+
+		return matches[0][1];
+	};
 
 	Object.freeze(MonsterData);
 

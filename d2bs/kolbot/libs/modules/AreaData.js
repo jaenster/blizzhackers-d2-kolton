@@ -13,6 +13,9 @@
 		['nmon1', 'nmon2', 'nmon3', 'nmon4', 'nmon5', 'nmon6', 'nmon7', 'nmon8', 'nmon9', 'nmon10'],
 	][me.diff && 1]; // mon is for normal, nmon is for nm/hell, umon is specific to picking champion/uniques in normal
 
+	const MonsterData = require('./MonsterData');
+	const LocaleStringName = require('./LocaleStringID').LocaleStringName;
+
 	/**
 	 *  AreaData[areaID]
 	 *  .Super = number of super uniques present in this area
@@ -33,47 +36,54 @@
 
 	for (let i = 0; i < AreaData.length; i++) {
 		let index = i;
-		AreaData[i] = Object.freeze(Object.defineProperties({}, {
-			Super: {get: () => SUPER[index], enumerable: true},
-			Index: {get: () => index, enumerable: true},
-			Act: {get: () => getBaseStat('levels', index, 'Act'), enumerable: true},
-			MonsterDensity: {
-				get: () => getBaseStat('levels', index, ['MonDen', 'MonDen(N)', 'MonDen(H)'][me.diff]),
-				enumerable: true
-			},
-			ChampionPacks: {
-				get: () => ({
-					Min: getBaseStat('levels', index, ['MonUMin', 'MonUMin(N)', 'MonUMin(H)'][me.diff]),
-					Max: getBaseStat('levels', index, ['MonUMax', 'MonUMax(N)', 'MonUMax(H)'][me.diff])
-				}), enumerable: true
-			},
-			Waypoint: {get: () => getBaseStat('levels', index, 'Waypoint'), enumerable: true},
-			Level: {
-				get: () => getBaseStat('levels', index, ['MonLvl1Ex', 'MonLvl2Ex', 'MonLvl3Ex'][me.diff]),
-				enumerable: true
-			},
-			Size: {
-				get: () => {
-					if (index === 111) { // frigid highlands doesn't specify size, manual measurement
-						return {x: 210, y: 710};
-					}
+		AreaData[i] = ({
+			Super: SUPER[index],
+			Index: index,
+			Act: getBaseStat('levels', index, 'Act'),
+			MonsterDensity: getBaseStat('levels', index, ['MonDen', 'MonDen(N)', 'MonDen(H)'][me.diff]),
+			ChampionPacks: ({
+				Min: getBaseStat('levels', index, ['MonUMin', 'MonUMin(N)', 'MonUMin(H)'][me.diff]),
+				Max: getBaseStat('levels', index, ['MonUMax', 'MonUMax(N)', 'MonUMax(H)'][me.diff])
+			}),
+			Waypoint: getBaseStat('levels', index, 'Waypoint'),
+			Level: getBaseStat('levels', index, ['MonLvl1Ex', 'MonLvl2Ex', 'MonLvl3Ex'][me.diff]),
+			Size: (() => {
+				if (index === 111) { // frigid highlands doesn't specify size, manual measurement
+					return {x: 210, y: 710};
+				}
 
-					if (index === 112) { // arreat plateau doesn't specify size, manual measurement
-						return {x: 690, y: 230};
-					}
+				if (index === 112) { // arreat plateau doesn't specify size, manual measurement
+					return {x: 690, y: 230};
+				}
 
-					return {
-						x: getBaseStat('leveldefs', index, ['SizeX', 'SizeX(N)', 'SizeX(H)'][me.diff]),
-						y: getBaseStat('leveldefs', index, ['SizeY', 'SizeY(N)', 'SizeY(H)'][me.diff])
-					};
-				}, enumerable: true
+				return {
+					x: getBaseStat('leveldefs', index, ['SizeX', 'SizeX(N)', 'SizeX(H)'][me.diff]),
+					y: getBaseStat('leveldefs', index, ['SizeY', 'SizeY(N)', 'SizeY(H)'][me.diff])
+				};
+			})(),
+			Monsters: (MONSTER_KEYS.map(key => getBaseStat('levels', index, key)).filter(key => key !== 65535)),
+			forEachMonster: function (cb) {
+				if (typeof cb === 'function') {
+					this.Monsters.forEach(monID => {
+						cb(MonsterData[monID], MonsterData[monID].Rarity * (MonsterData[monID].GroupCount.Min + MonsterData[monID].GroupCount.Max) / 2);
+					});
+				}
 			},
-			Monsters: {
-				get: () => MONSTER_KEYS.map(key => getBaseStat('levels', index, key)).filter(key => key !== 65535),
-				enumerable: true
+			forEachMonsterAndMinion: function (cb) {
+				if (typeof cb === 'function') {
+					this.Monsters.forEach(monID => {
+						let rarity = MonsterData[monID].Rarity * (MonsterData[monID].GroupCount.Min + MonsterData[monID].GroupCount.Max) / 2;
+						cb(MonsterData[monID], rarity, null);
+						MonsterData[monID].Minions.forEach(minionID => {
+							let minionrarity = MonsterData[monID].Rarity * (MonsterData[monID].MinionCount.Min + MonsterData[monID].MinionCount.Max) / 2 / MonsterData[monID].Minions.length;
+							cb(MonsterData[minionID], minionrarity, MonsterData[monID]);
+						});
+					});
+				}
 			},
-			LocaleString: {get: () => AREA_LOCALE_STRING[index], enumerable: true},
-		}));
+			LocaleString: getLocaleString(AREA_LOCALE_STRING[index]),
+			InternalName: LocaleStringName[AREA_LOCALE_STRING[index]],
+		});
 	}
 
 	Object.freeze(AreaData);
