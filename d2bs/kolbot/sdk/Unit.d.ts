@@ -5,6 +5,8 @@
 type ItemType = 4;
 declare class Item extends Unit {
     public type: ItemType;
+    location: number;
+    bodyLocation: number;
     getFlags() :number;
     getFlag(flag: number) :boolean;
     shop():boolean;
@@ -22,8 +24,9 @@ declare class Monster extends Unit{
 declare class Merc extends Monster{
 
 }
-declare class Unit {
+declare class Unit implements Unit {
     type : UnitType;
+    classid: number;
     getNext() : Unit|false;
     cancel() : void;
     repair() : boolean;
@@ -50,10 +53,17 @@ declare class Unit {
     move(x: number, y: number) ;
     getQuest(quest:number, subid: number) ;
     getMinionCount() : number ;
+    inTown: boolean;
+    dead: boolean;
+    runwalk: number;
+    getItemsEx(...args):Item[];
 }
 
-declare class me {
+declare class Me {
     revive() : void;
     getRepairCost() :number;
+    stamina: number;
+    staminamax: number;
 }
 
+declare const me : Unit & Me;

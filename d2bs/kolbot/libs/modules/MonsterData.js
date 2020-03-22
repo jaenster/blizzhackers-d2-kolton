@@ -38,40 +38,18 @@
 	 *  .Lightning = lightning resist
 	 *  .Poison = poison resist
 	 *  .Minions = array of minions that can spawn with this unit
-	 */
-
-	/**
-	 *  MonsterData[classID]
-	 *  .Index = Index of this monster
-	 *  .Level = Level of this monster in normal (use GameData.monsterLevel to find monster levels)
-	 *  .Ranged = if monster is ranged
-	 *  .Rarity = weight of this monster in level generation
-	 *  .Threat = threat level used by mercs
-	 *  .Align = alignment of unit (determines what it will attack)
-	 *  .Melee = if monster is melee
-	 *  .NPC = if unit is NPC
-	 *  .Demon = if monster is demon
-	 *  .Flying = if monster is flying
-	 *  .Boss = if monster is a boss
-	 *  .ActBoss = if monster is act boss
-	 *  .Killable = if monster can be killed
-	 *  .Convertable = if monster is affected by convert or mind blast
-	 *  .NeverCount = if not counted as a minion
-	 *  .DeathDamage = explodes on death
-	 *  .Regeneration = hp regeneration
-	 *  .LocaleString = locale string index for getLocaleString
-	 *  .ExperienceModifier = percent of base monster exp this unit rewards when killed
-	 *  .Undead = 2 if greater undead, 1 if lesser undead, 0 if neither
-	 *  .Drain = drain effectiveness percent
-	 *  .Block = block percent
-	 *  .Physical = physical resist
-	 *  .Magic = magic resist
-	 *  .Fire = fire resist
-	 *  .Lightning = lightning resist
-	 *  .Poison = poison resist
-	 *  .Minions = array of minions that can spawn with this unit
 	 *  .MinionCount.Min = minimum number of minions that can spawn with this unit
 	 *  .MinionCount.Max = maximum number of minions that can spawn with this unit
+	 *  .Velocity =
+	 *  .Run =
+	 *  .SizeX =
+	 *  .SizeY =
+	 *  .Attack1MinDmg =
+	 *  .Attack1MaxDmg =
+	 *  .Attack2MinDmg =
+	 *  .Attack2MaxDmg =
+	 *  .Skill1MinDmg =
+	 *  .Skill1MaxDmg =
 	 */
 
 	var MonsterData = Array(MONSTER_INDEX_COUNT);
@@ -123,6 +101,12 @@
 			Run: getBaseStat('monstats', index, 'Run'),
 			SizeX: getBaseStat('monstats', index, 'SizeX'),
 			SizeY: getBaseStat('monstats', index, 'SizeY'),
+			Attack1MinDmg: getBaseStat('monstats', index, ["A1MinD", "A1MinD(N)", "A1MinD(H)"][me.diff]),
+			Attack1MaxDmg: getBaseStat('monstats', index, ["A1MaxD", "A1MaxD(N)", "A1MaxD(H)"][me.diff]),
+			Attack2MinDmg: getBaseStat('monstats', index, ["A2MinD", "A2MinD(N)", "A2MinD(H)"][me.diff]),
+			Attack2MaxDmg: getBaseStat('monstats', index, ["A2MaxD", "A2MaxD(N)", "A2MaxD(H)"][me.diff]),
+			Skill1MinDmg: getBaseStat('monstats', index, ["S1MinD", "S1MinD(N)", "S1MinD(H)"][me.diff]),
+			Skill1MaxDmg: getBaseStat('monstats', index, ["S1MaxD", "S1MaxD(N)", "S1MaxD(H)"][me.diff]),
 		});
 	}
 

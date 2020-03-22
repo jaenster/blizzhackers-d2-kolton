@@ -2395,10 +2395,14 @@
         },
         items: {
             cube: 549,
+            StaminaPotion: 513,
+            RejuvPotion: 515,
+            FullRejuvPotion: 516,
             tptome: 518,
             idtome: 519,
             StaffofKings: 92,
             KhalimsFlail: 173,
+            Key: 543,
             KhalimsEye: 553,
             KhalimHeart: 554,
             KhalimBrain: 555,
@@ -2406,6 +2410,8 @@
             JadeFigurine: 546,
             Soulstone: 551,
             BookOfSkill: 552,
+            arrows: 526,
+            bolts: 528,
             tpScroll: 529,
             idScroll: 530,
         },
@@ -2418,17 +2424,30 @@
             Item: 4,
             Stairs: 5, // ToDo: might be more as stairs
         },
+        itemquality: {
+            lowquality: 1,
+            normal: 2,
+            superior: 3,
+            magic: 4,
+            set: 5,
+            rare: 6,
+            unique: 7,
+            crafted: 8,
+        },
         itemtype: {
             gold: 4,
+            bowquiver: 5,
+            crossbowquiver: 6,
             scroll: 22,
+            bow: 27,
+            crossbow: 35,
             key: 41,
-            sc: 82,
-            lc: 83,
-            gc: 84,
             hppot: 76,
             mppot: 77,
             rvpot: 78,
-            charms: 82,
+            smallCharm: 82,
+            largeCharm: 83,
+            grandCharm: 84,
         },
         itemmode: {
             inStorage: 0, //Item inven stash cube store = Item inven stash cube store
@@ -2523,7 +2542,33 @@
             RiteOfPassage: 39,
             EveOfDestruction: 40,
             SecretCowLevel: 41,
-        }
+        },
+        colors: {
+            White: "ÿc0",
+            Red: "ÿc1",
+            NeonGreen: "ÿc2",
+            Blue: "ÿc3",
+            DarkGold: "ÿc4",
+            Gray: "ÿc5",
+            Black: "ÿc6",
+            LightGold: "ÿc7",
+            Orange: "ÿc8",
+            Yellow: "ÿc9",
+            DarkGreen: "ÿc:",
+            Purple: "ÿc;",
+            Green: "ÿc<",
+
+            D2Bot: {
+                Black: 0,
+                Blue: 4,
+                Green: 5,
+                Gold: 6,
+                DarkGold: 7,
+                Orange: 8,
+                Red: 9,
+                Gray: 10
+            }
+        },
     };
 
 // Need to be set after its loaded
